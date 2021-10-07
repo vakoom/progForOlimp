@@ -1,0 +1,59 @@
+#include <iostream>
+#include <vector>
+#include <set>
+#include <queue>
+#include <algorithm>
+using namespace std;
+
+vector<pair<int, pair<int, int>>> cost;
+vector<int> p;
+vector<int> sz;
+int ans;
+
+int get(int v){
+    if (p[v] == v){
+        return v;
+    }
+    return p[v] = get(p[v]);
+}
+
+void unite(int u, int v, int c){
+    u = get(u);
+    v = get(v);
+    if (u != v){
+        if (sz[u] < sz[v]){
+            swap(u, v);
+        }
+        p[v] = u;
+        sz[u] += sz[v];
+        ans += c;
+    }
+}
+
+int main(){
+    int a, b, c, n, m;
+    cin >> n >> m;
+    p.resize(n);
+    sz.resize(n);
+    for (int i = 0; i < n; ++i){
+        p[i] = i;
+        sz[i] = 1;
+    }
+
+    for (int i = 0; i < m; ++i){
+        cin >> a >> b >> c;
+        pair<int, pair<int, int>> abc = {c, {a, b}};
+        cost.push_back(abc);
+    }
+    sort(cost.begin(), cost.end());
+    for (auto i: cost){
+        c = i.first;
+        a = i.second.first;
+        b = i.second.second;
+        if (get(a - 1) != get(b - 1)){
+            unite(a - 1, b - 1, c);
+        }
+    }
+    cout << ans;
+    return 0;
+}
