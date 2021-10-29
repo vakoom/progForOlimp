@@ -1,0 +1,68 @@
+// проверка на двудольность
+
+#include <iostream>
+#include <vector>
+
+
+using namespace std;
+
+vector<vector<int>> g;
+vector<int> c;
+int s;
+
+int inv(int a){
+    return (2 - (a + 1) % 2);
+}
+
+void dfs(int s, int color){
+    c[s] = color;
+    for (int i : g[s]){
+        if (c[i] == 0){
+            dfs(i, inv(color));
+        }else if (c[i] == color){
+            cout << "NO";
+            exit(0);
+        }
+    }
+}
+
+
+
+
+
+int main() {
+    int n, k;
+    cin >> n >> k;
+    c.resize(n);
+    g.resize(n);
+    for (int i = 0; i < k; ++i){
+        int x, y;
+        cin >> x >> y;
+        --x;
+        --y;
+        g[x].push_back(y);
+        g[y].push_back(x);
+    }
+    s = 0;
+    for (int i = 0; i < n; ++i){
+        if (c[i] == 0){
+            dfs(i, 1);
+        }
+    }
+    // проверка на не ок:
+    for (int i = 0; i < n; ++i){
+        for (int j : g[i]){
+            if (c[i] == c[j]){
+                cout << "NO";
+                return 0;
+            }
+        }
+    }
+    // все ок:
+    cout << "YES" << endl;
+    for (int i = 0; i < n; ++i){
+        if (c[i] == 1){
+            cout << i + 1 << " ";
+        }
+    }
+}
